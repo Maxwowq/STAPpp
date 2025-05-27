@@ -37,7 +37,7 @@ bool CT3Material::Read(ifstream& Input)
 {
 	Input >> nset;	// Number of property set
 
-	Input >> E >> Thickness;	// Young's modulus and section area
+	Input >> E >> nu >> Thickness >> plane_stress;	// Young's modulus, Poisson's ratio, thickness and plane stress indicator
 
 	return true;
 }

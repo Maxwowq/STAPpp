@@ -1,4 +1,4 @@
-### 代码阅读
+### 一、代码阅读
 原代码仅有一种单元————三维两节点线性单元
 
 识别节点类型的原理是通过`ElementGroup`类内结合`ElementTypes`实现的，其中关键在于
@@ -17,10 +17,16 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 
 
 
-### 修改目标
-#### 增添三维三节点单元
+### 二、修改目标
+#### 增添三维三节点单元`CT3`
 正在进行，已添加头文件`T3.h`和`T3.cpp`。
 
-#### 在原有代码中添加三维三节点单元
+已完成`T3.h`。
+
+#### 在`CMaterial`中添加三维三节点单元材料类`CT3Material`
 注意到`Matrial.h`中也需要为具体材料添加代码。
-已完成，相较于基础类添加了`Thickness`厚度作为材料属性。
+已完成，相较于基础类添加了`Thickness`厚度作为材料属性，此外，还添加了泊松比`nu`和平面应力指示变量`plane_stress`。
+
+#### 在`ElementGroup`类中完善`switch`语句
+
+#### 在`Outputter`的`switch`语句完善关于应力输出

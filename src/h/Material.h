@@ -59,6 +59,8 @@ class CT3Material : public CMaterial
 public:
 
 	double Thickness;	//!< Thickness of a T3 element
+	double nu;	//!< Poisson's ratio of T3 element
+	bool plane_stress;	//!< If the element is plane stress or plane strain
 
 public:
 
