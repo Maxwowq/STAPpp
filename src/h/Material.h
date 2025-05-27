@@ -52,3 +52,19 @@ public:
 //!	Write material data to Stream
 	virtual void Write(COutputter& output);
 };
+
+//! Material class for T3 element
+class CT3Material : public CMaterial
+{
+public:
+
+	double Thickness;	//!< Thickness of a T3 element
+
+public:
+
+//!	Read material data from stream Input
+	virtual bool Read(ifstream& Input);
+
+//!	Write material data to Stream
+	virtual void Write(COutputter& output);
+};

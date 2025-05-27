@@ -31,3 +31,19 @@ void CBarMaterial::Write(COutputter& output)
 {
 	output << setw(16) << E << setw(16) << Area << endl;
 }
+
+//	Read material data from stream Input
+bool CT3Material::Read(ifstream& Input)
+{
+	Input >> nset;	// Number of property set
+
+	Input >> E >> Thickness;	// Young's modulus and section area
+
+	return true;
+}
+
+//	Write material data to Stream
+void CT3Material::Write(COutputter& output)
+{
+	output << setw(16) << E << setw(16) << Thickness << endl;
+}
