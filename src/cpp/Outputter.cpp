@@ -298,6 +298,10 @@ void COutputter::OutputElementStress()
 
 				break;
 
+			case ElementTypes::T3: // T3 element
+				*this << "  ELEMENT             S11            S22            S12            S22" << endl
+					<< "  NUMBER" << endl;
+
 			default: // Invalid element type
 				cerr << "*** Error *** Elment type " << ElementType
 					<< " has not been implemented.\n\n";

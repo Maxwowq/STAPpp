@@ -30,3 +30,8 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 #### 在`ElementGroup`类中完善`switch`语句
 
 #### 在`Outputter`的`switch`语句完善关于应力输出
+
+### 三、TODO
+- [x] 完成`CT3Material`的`ComputeElasticityMatrix()`方法
+- [ ] 完成`CT3Material`的`ElementStress()`方法
+- [ ] 在`OutPutter`类的`OutputElementStress()`方法中的`switch`语句中添加`T3`单元

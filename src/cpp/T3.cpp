@@ -57,8 +57,66 @@ void CT3::ElementStiffness(double* Matrix)
 {
     clear(Matrix, SizeOfStiffnessMatrix());
 
-// Calculate elasticity matrix
-
+// Calculate elasticity matrix(finished in material reading period)
+    CT3Material* material_ = dynamic_cast<CT3Material*>(ElementMaterial_);
 
 // Calcuclate a, b, c and element area A
+    double a[3], b[3], c[3];
+
+    for(int i=0; i<3; i++){
+        int j = (i+1)%3;
+        int k = (i+2)%3;
+        a[i] = nodes_[j]->XYZ[0]*nodes_[k]->XYZ[1] - nodes_[k]->XYZ[0]*nodes_[j]->XYZ[1];
+        b[i] = nodes_[j]->XYZ[1] - nodes_[k]->XYZ[1];
+        c[i] = nodes_[k]->XYZ[0] - nodes_[j]->XYZ[0];
+    }
+
+    double A = (a[0] + a[1] + a[2])/2;
+
+// Calculate B Matrix
+    double B[3][6];
+    for (int i = 0; i < 3; i++) {
+        int node_idx = i;
+        int col_u = 2 * node_idx;
+        int col_v = 2 * node_idx + 1;
+
+        B[0][col_u] = b[i] / (2 * A); // ε_xx
+        B[0][col_v] = 0;
+
+        B[1][col_u] = 0;
+        B[1][col_v] = c[i] / (2 * A); // ε_yy
+
+        B[2][col_u] = c[i] / (2 * A); // γ_xy
+        B[2][col_v] = b[i] / (2 * A);
+    }
+
+// Calculate final K^e (Matrix)
+    double DB[3][6];
+    for(int i=0; i<3; i++){
+        for(int j=0; j<6; j++){
+            DB[i][j] = 0;
+            for(int k=0; k<3; k++){
+                DB[i][j] += material_->D[i][k] * B[k][j];
+            }
+        }
+    }
+
+    for(int i=0; i<6; i++){
+        // only compute upper half
+        for(int j=i; j<6; j++){
+            // convert i,j to matrix rank
+            int rank = (j+1)*(j+2)/2 - (i+1);
+            Matrix[rank] = 0;
+            for(int k=0; k<3; k++){
+                Matrix[rank] += B[k][i] * DB[k][j];
+            }
+            Matrix[rank] = Matrix[rank] * A * material_->t;
+        }
+    }
+}
+
+//	Calculate element stress
+void CT3::ElementStress(double* stress, double* Displacement)
+{
+    
 }

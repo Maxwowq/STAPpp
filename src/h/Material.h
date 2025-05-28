@@ -58,9 +58,10 @@ class CT3Material : public CMaterial
 {
 public:
 
-	double Thickness;	//!< Thickness of a T3 element
+	double t;	//!< Thickness of a T3 element
 	double nu;	//!< Poisson's ratio of T3 element
-	bool plane_stress;	//!< If the element is plane stress or plane strain
+	bool PlaneStress;	//!< If the element is plane stress or plane strain
+	double D[3][3];
 
 public:
 
@@ -69,4 +70,7 @@ public:
 
 //!	Write material data to Stream
 	virtual void Write(COutputter& output);
+
+//! Compute elasticity matrix
+	void ComputeElasticityMatrix();
 };
