@@ -14,6 +14,7 @@
 
 #include "Element.h"
 #include "Bar.h"
+#include "T3.h"
 #include "Material.h"
 #include "Node.h"
 

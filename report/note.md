@@ -33,6 +33,7 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 
 ### 三、TODO
 - [x] 完成`CT3Material`的`ComputeElasticityMatrix()`方法
-- [ ] 完成`CT3Material`的`ElementStress()`方法
-- [ ] 在`OutPutter`类的`OutputElementStress()`方法中的`switch`语句中添加`T3`单元
-- [ ] 完成`T3`的`GenerateLocationMatrix()`方法（好像源代码已经完成了）
+- [x] 完成`CT3Material`的`ElementStress()`方法
+- [x] 在`OutPutter`类的`OutputElementStress()`方法中的`switch`语句中添加`T3`单元
+- [x] 完成`T3`的`GenerateLocationMatrix()`方法（好像源代码已经完成了
+- [x] 完成`ElementGroup`类的三个`switch`
