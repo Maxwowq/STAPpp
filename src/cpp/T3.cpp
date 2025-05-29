@@ -12,7 +12,7 @@ CT3::CT3()
     NEN_ = 3; // Each element has 3 nodes
     nodes_ = new CNode*[NEN_];
 
-    ND_ = 9;
+    ND_ = 6; // 2D element in 3D, z axis is constrained
     LocationMatrix_ = new unsigned int[ND_];
 
     ElementMaterial_ = nullptr;
@@ -21,6 +21,17 @@ CT3::CT3()
 //  Destructor
 CT3::~CT3()
 {
+}
+
+// Generate location matrix of T3 element(ignoring z axis)
+void CT3::GenerateLocationMatrix()
+{
+    int i=0;
+    for(int N=0; N < NEN_; N++){
+        for(int D=0; D < 2; D++){
+            LocationMatrix_[i++] = nodes_[N]->bcode[D];
+        }
+    }
 }
 
 // Read element data from stram Input
@@ -34,6 +45,8 @@ bool CT3::Read(ifstream& Input, CMaterial* MaterialSets, CNode* NodeList)
 	nodes_[0] = &NodeList[N1 - 1];
 	nodes_[1] = &NodeList[N2 - 1];
     nodes_[2] = &NodeList[N3 - 1];
+
+    GenerateLocationMatrix();
 
     return true;
 }

@@ -29,4 +29,7 @@ public:
 
 //!	Calculate element stress
 	virtual void ElementStress(double* stress, double* Displacement);
+
+//! Generate location matrix of T3 element(ignoring z axis)
+	virtual void GenerateLocationMatrix();
 };

@@ -300,7 +300,7 @@ void COutputter::OutputElementStress()
 
 			case ElementTypes::T3:{// T3 element
 				// Stress in T3 element is constant
-				*this << "  ELEMENT             S11            S22            S12            S22" << endl
+				*this << "  ELEMENT             S11            S22            S12            S33" << endl
 					<< "  NUMBER" << endl;
 
 				double stress[4];
