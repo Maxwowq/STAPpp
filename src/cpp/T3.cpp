@@ -74,7 +74,6 @@ void CT3::ElementStiffness(double* Matrix)
     double A = (a[0] + a[1] + a[2])/2;
 
 // Calculate B Matrix
-    double B[3][6];
     for (int i = 0; i < 3; i++) {
         int node_idx = i;
         int col_u = 2 * node_idx;
@@ -118,5 +117,34 @@ void CT3::ElementStiffness(double* Matrix)
 //	Calculate element stress
 void CT3::ElementStress(double* stress, double* Displacement)
 {
-    
+    CT3Material* material_ = dynamic_cast<CT3Material*>(ElementMaterial_);
+
+    double epsilon[3];
+
+    // epsilon = B * d
+    for(int i=0; i<3; i++){
+        epsilon[i] = 0;
+        for(int k=0; k<6; k++){
+            epsilon[i] += B[i][k] * Displacement[LocationMatrix_[k]-1];
+        }
+    }
+
+    // s = D * epsilon
+    for(int i=0; i<3; i++){
+        stress[i] = 0;
+        for(int k=0; k<3; k++){
+            stress[i] += material_->D[i][k] * epsilon[k];
+        }
+    }
+
+    if(material_->PlaneStress){
+        stress[3] = 0;
+    }
+    else{
+        // s22 = lambda * (epsilon_x + epsilon_y)
+        double E = material_->E;
+        double nu = material_->nu;
+        double lambda = E*nu/(1+nu)/(1-2*nu);
+        stress[3] = lambda * (epsilon[0] + epsilon[1]);
+    }
 }

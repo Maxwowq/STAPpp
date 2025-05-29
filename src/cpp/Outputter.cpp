@@ -298,9 +298,31 @@ void COutputter::OutputElementStress()
 
 				break;
 
-			case ElementTypes::T3: // T3 element
+			case ElementTypes::T3:{// T3 element
+				// Stress in T3 element is constant
 				*this << "  ELEMENT             S11            S22            S12            S22" << endl
 					<< "  NUMBER" << endl;
+
+				double stress[4];
+
+				for(unsigned int Ele = 0; Ele < NUME; Ele++) {
+					CElement& Element = EleGrp[Ele];
+					Element.ElementStress(stress, Displacement);
+					
+					CBarMaterial& material = *dynamic_cast<CBarMaterial*>(Element.GetElementMaterial());
+					
+					*this << setw(7) << Ele + 1
+						<< fixed << setprecision(6)
+						<< setw(15) << stress[0] 
+						<< setw(15) << stress[1]
+						<< setw(15) << stress[2]
+						<< setw(15) << stress[3] << endl;
+				}
+
+				*this << endl;
+
+				break;
+			}
 
 			default: // Invalid element type
 				cerr << "*** Error *** Elment type " << ElementType

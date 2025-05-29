@@ -7,6 +7,9 @@ using namespace std;
 //! T3 element class
 class CT3 : public CElement
 {
+private:
+	double B[3][6];
+
 public:
 
 //! COnstructor

@@ -52,24 +52,29 @@ void CT3Material::Write(COutputter& output)
 // Compute elasticity matrix
 void CT3Material::ComputeElasticityMatrix(){
 	// For simplicity, store all data of the matrix
+	double E_, nu_;
 	if(!PlaneStress){
 		// If the material is plane strain problem
 		// convert to elasticity property into plane stress problem
-		E = E/(1-nu*nu);
-		nu = nu/(1-nu);
+		E_ = E/(1-nu*nu);
+		nu_ = nu/(1-nu);
+	}
+	else{
+		E_ = E;
+		nu_ = nu;
 	}
 
 	// compute coefficient
-	double coefficient = E/(1-nu*nu);
+	double coefficient = E_/(1-nu_*nu_);
 
 	// compute matrix
 	D[0][0] = coefficient * 1;       // D11
-	D[0][1] = coefficient * nu;      // D12
+	D[0][1] = coefficient * nu_;      // D12
 	D[0][2] = 0;                     // D13
-	D[1][0] = coefficient * nu;      // D21
+	D[1][0] = coefficient * nu_;      // D21
 	D[1][1] = coefficient * 1;       // D22
 	D[1][2] = 0;                     // D23
 	D[2][0] = 0;                     // D31
 	D[2][1] = 0;                     // D32
-	D[2][2] = coefficient * (1 - nu) / 2; // D33 (剪切项)
+	D[2][2] = coefficient * (1 - nu_) / 2; // D33 (剪切项)
 }
