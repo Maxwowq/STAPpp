@@ -46,7 +46,7 @@ bool CT3Material::Read(ifstream& Input)
 //	Write material data to Stream
 void CT3Material::Write(COutputter& output)
 {
-	output << "\t\t" << E << "\t\t" << nu << "\t\t" << t << "\t\t";
+	output << setw(15) << E << setw(15) << nu << setw(15) << t << setw(15);
 	if(PlaneStress){
 		output << "PlaneStress" << endl;
 	}

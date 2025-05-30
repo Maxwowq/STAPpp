@@ -41,5 +41,11 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 - [x] 明确2D和3D的问题
 - [x] 尝试编译
 - [x] 编辑测试文件并测试（例题4-4的三角形单元版本）
-- [ ] 利用Abaquas验证，貌似失败了
-- [ ] 完善`Outputter`类中的的`
+- [x] 利用Abaquas验证，位移计算结果一致，但是输出应力时`Segmentation fault (core dumped)`
+- [x] 完善`Outputter`类中的的`OutputT3Elements`
+- [x] debug，使其能正确输出应力
+- [ ] 后处理绘图
+- [ ] 收敛率分析
+- [ ] 分片实验
+- [ ] 验证算例
+- [ ] 完成课程设计报告

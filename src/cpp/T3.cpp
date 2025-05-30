@@ -138,7 +138,9 @@ void CT3::ElementStress(double* stress, double* Displacement)
     for(int i=0; i<3; i++){
         epsilon[i] = 0;
         for(int k=0; k<6; k++){
-            epsilon[i] += B[i][k] * Displacement[LocationMatrix_[k]-1];
+            if(LocationMatrix_[k]){
+                epsilon[i] += B[i][k] * Displacement[LocationMatrix_[k]-1];
+            }
         }
     }
 

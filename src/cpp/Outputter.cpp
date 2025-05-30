@@ -231,9 +231,9 @@ void COutputter::OutputT3Elements(unsigned int EleGrp)
 		  << endl
 		  << endl;
 
-	*this << "  SET       YOUNG'S     CROSS-SECTIONAL" << endl
-		  << " NUMBER		MODULUS		POISSON'S RATIO	THICKNESS		PLANE" << endl
-		  << "		E			nu				t				" << endl;
+	*this << "  SET       YOUNG'S     POISSON'S     THICKNESS      PLANE" << endl
+		  << " NUMBER     MODULUS       RATIO" << endl
+		  << "               E            nu            t" << endl;
 
 	//	Loop over for all property sets
 	for (unsigned int mset = 0; mset < NUMMAT; mset++)
@@ -355,8 +355,6 @@ void COutputter::OutputElementStress()
 				for(unsigned int Ele = 0; Ele < NUME; Ele++) {
 					CElement& Element = EleGrp[Ele];
 					Element.ElementStress(stress, Displacement);
-					
-					CBarMaterial& material = *dynamic_cast<CBarMaterial*>(Element.GetElementMaterial());
 					
 					*this << setw(7) << Ele + 1
 						<< fixed << setprecision(6)
