@@ -39,4 +39,6 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 - [x] 完成`ElementGroup`类的三个`switch`
 - [x] 针对`T3`实现`GenerateLocationMatrix()`。要求只有6个单元
 - [x] 明确2D和3D的问题
-- [ ] 尝试编译
+- [x] 尝试编译
+- [x] 编辑测试文件并测试（例题4-4的三角形单元版本）
+- [ ] 利用Abaquas验证，貌似失败了
