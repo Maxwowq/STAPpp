@@ -46,7 +46,14 @@ bool CT3Material::Read(ifstream& Input)
 //	Write material data to Stream
 void CT3Material::Write(COutputter& output)
 {
-	output << setw(16) << E << setw(16) << t << endl;
+	output << "\t\t" << E << "\t\t" << nu << "\t\t" << t << "\t\t";
+	if(PlaneStress){
+		output << "PlaneStress" << endl;
+	}
+	else
+	{
+		output << "PlaneStrain" << endl;
+	}
 }
 
 // Compute elasticity matrix

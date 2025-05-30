@@ -42,3 +42,4 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 - [x] 尝试编译
 - [x] 编辑测试文件并测试（例题4-4的三角形单元版本）
 - [ ] 利用Abaquas验证，貌似失败了
+- [ ] 完善`Outputter`类中的的`
