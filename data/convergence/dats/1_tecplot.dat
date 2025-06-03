@@ -1,0 +1,9 @@
+Title="convergence analysis file of T3 element when h = 1"
+Variables="X"   "Y"   "U"   "V"
+Zone N=4 E=2 F=FEPOINT ET=TRIANGLE
+0                   0                   0                   0
+2                   0        -0.000138776        -0.000293878
+0                   1                   0                   0
+2                   1         0.000138776        -0.000261224
+1                   2                   4
+4                   3                   1
