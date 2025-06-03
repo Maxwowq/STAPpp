@@ -44,7 +44,7 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 - [x] 利用Abaquas验证，位移计算结果一致，但是输出应力时`Segmentation fault (core dumped)`
 - [x] 完善`Outputter`类中的的`OutputT3Elements`
 - [x] debug，使其能正确输出应力
-- [ ] 后处理绘图
+- [ ] 后处理绘图输出位移云图
 - [ ] 收敛率分析
 - [ ] 分片实验
 - [ ] 验证算例

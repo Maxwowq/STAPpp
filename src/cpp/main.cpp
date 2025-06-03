@@ -12,6 +12,7 @@
 #include "Bar.h"
 #include "Outputter.h"
 #include "Clock.h"
+#include "Tecplot.h"
 
 using namespace std;
 
@@ -56,6 +57,7 @@ int main(int argc, char *argv[])
     double time_input = timer.ElapsedTime();
 
     COutputter* Output = COutputter::GetInstance();
+    CTecplot *Tecplot = CTecplot::GetInstance(filename);
 
     if (!FEMData->GetMODEX())
     {
@@ -102,6 +104,8 @@ int main(int argc, char *argv[])
 
 //      Calculate and output stresses of all elements
         Output->OutputElementStress();
+
+        Tecplot->OutputDatFile();
     }
 
     double time_solution = timer.ElapsedTime();
