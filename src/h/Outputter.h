@@ -62,8 +62,14 @@ public:
 //!	Output load data 
 	void OutputLoadInfo(); 
 
+//! Output essential boundary info
+	void OutputEBinfo();
+
 //!	Output displacement data
 	void OutputNodalDisplacement();
+
+//! Output nodal force data
+	void OutputNodalForce();
 
 //!	Output element stresses 
 	void OutputElementStress();

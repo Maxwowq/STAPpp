@@ -31,10 +31,15 @@ public:
 
 //!	Boundary code of each degree of freedom of the node
 /*!		0: The corresponding degree of freedom is active (defined in the global system) */
-/*!		1: The corresponding degree of freedom in nonactive (not defined) */
+/*!		1: The corresponding degree of freedom in nonactive (not defined, like z axis in plane stress problem)*/
+/*!		2: The corresponding degree of freedom is on essential boundary */
 /*!	After call Domain::CalculateEquationNumber(), bcode stores the global equation number */
 /*!	corresponding to each degree of freedom of the node */
 	unsigned int bcode[NDF];
+
+/*! After call Domain::CalculateEquationNumber(), gbcode stores the global equation number*/
+/*!	even on the essential boundary condition*/
+	unsigned int gbcode[NDF];
 
 //!	Constructor
 	CNode(double X = 0, double Y = 0, double Z = 0);
@@ -50,4 +55,7 @@ public:
 
 //!	Write nodal displacement
 	void WriteNodalDisplacement(COutputter& OutputFile, double* Displacement);
+
+//! Write nodal force
+	void WriteNodalForce(COutputter& OutputFile, double* NodalForce);
 };

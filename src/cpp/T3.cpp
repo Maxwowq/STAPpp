@@ -34,6 +34,17 @@ void CT3::GenerateLocationMatrix()
     }
 }
 
+// Generate global location matrix of T3 element (ignoring z axis)
+void CT3::GenerateGlobalLocationMatrix()
+{
+    int i=0;
+    for(int N=0; N < NEN_; N++){
+        for(int D=0; D < 2; D++){
+            GlobalLocationMatrix_[i++] = nodes_[N]->gbcode[D];
+        }
+    }
+}
+
 // Read element data from stram Input
 bool CT3::Read(ifstream& Input, CMaterial* MaterialSets, CNode* NodeList)
 {
@@ -60,9 +71,6 @@ void CT3::Write(COutputter& output)
             << setw(12) << ElementMaterial_->nset 
             << endl;
 }
-
-// Calculate elasticity matrix
-
 
 //	Calculate element stiffness matrix 
 //	Upper triangular matrix, stored as an array column by colum starting from the diagonal element
@@ -102,7 +110,7 @@ void CT3::ElementStiffness(double* Matrix)
         B[2][col_v] = b[i] / (2 * A);
     }
 
-// Calculate final K^e (Matrix)
+// Calculate DB[3][6] matrix
     double DB[3][6];
     for(int i=0; i<3; i++){
         for(int j=0; j<6; j++){
@@ -113,6 +121,7 @@ void CT3::ElementStiffness(double* Matrix)
         }
     }
 
+// Calculate final K^e (Matrix)
     for(int i=0; i<6; i++){
         // only compute upper half
         for(int j=i; j<6; j++){

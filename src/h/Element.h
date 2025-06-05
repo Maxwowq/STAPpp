@@ -35,6 +35,9 @@ protected:
 //! Location Matrix of the element
     unsigned int* LocationMatrix_;
 
+//! Global Location Matrix including boundary condition of the element
+    unsigned int* GlobalLocationMatrix_;
+
 //! Dimension of the location matrix
     unsigned int ND_;
 
@@ -71,6 +74,16 @@ public:
                 LocationMatrix_[i++] = nodes_[N]->bcode[D];
     }
 
+//! Generate global location matrix including nodes on boudary conditions
+// CautionL Equation number is numbered from 1 !
+    virtual void GenerateGlobalLocationMatrix()
+    {
+        unsigned int i = 0;
+        for (unsigned int N = 0; N < NEN_; N++)
+            for(unsigned int D = 0; D < CNode::NDF; D++)
+                GlobalLocationMatrix_[i++] = nodes_[N]->gbcode[D];
+    }
+
 //! Return the size of the element stiffness matrix (stored as an array column by column)
     virtual unsigned int SizeOfStiffnessMatrix()
     {
@@ -98,6 +111,9 @@ public:
     
     //! Return the Location Matrix of the element
     inline unsigned int* GetLocationMatrix() { return LocationMatrix_; }
+
+    //! Return the Global Location Matrix of the element
+    inline unsigned int* GetGlobalLocationMatrix() { return GlobalLocationMatrix_; }
     
     //! Return the dimension of the location matrix
     inline unsigned int GetND() { return ND_; }

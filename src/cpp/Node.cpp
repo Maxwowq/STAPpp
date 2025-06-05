@@ -73,3 +73,23 @@ void CNode::WriteNodalDisplacement(COutputter& output, double* Displacement)
 
 	output << endl;
 }
+
+// Write  nodal force
+void CNode::WriteNodalForce(COutputter& output, double* NodalForce)
+{
+	output << setw(5) << NodeNumber << "        ";
+
+	for (unsigned int j=0; j<NDF; j++)
+	{
+		if (gbcode[j] == 0)
+		{
+			output << setw(18) << 0.0;
+		}
+		else
+		{
+			output << setw(18) << NodalForce[gbcode[j] - 1];
+		}
+	}
+
+	output << endl;
+}

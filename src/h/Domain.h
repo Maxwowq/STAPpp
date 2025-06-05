@@ -16,6 +16,7 @@
 #include "Solver.h"
 #include "LoadCaseData.h"
 #include "SkylineMatrix.h"
+#include "EssentialBoudary.h"
 
 using namespace std;
 
@@ -61,19 +62,36 @@ private:
 //!	List of all load cases
 	CLoadCaseData* LoadCases;
 
+//! Essential boundary data
+	CEBData* EBdata;
+
 //!	Number of concentrated loads applied in each load case
 	unsigned int* NLOAD;
 
 //!	Total number of equations in the system
 	unsigned int NEQ;
 
+//! Total number of boudary conditions (bcode = 2)
+	unsigned int NBC;
+
 //!	Banded stiffness matrix
 /*! A one-dimensional array storing only the elements below the	skyline of the 
     global stiffness matrix. */
     CSkylineMatrix<double>* StiffnessMatrix;
 
+//! Banded global stiffness matrix including dof on essential boudary conditions
+/*! A one-dimensional array storing only the elements below the	skyline of the 
+    global stiffness matrix. */
+	CSkylineMatrix<double>* GlobalStiffnessMatrix;
+
 //!	Global nodal force/displacement vector
 	double* Force;
+
+//! Global nodal force (including boundary condition)
+	double* GlobalNodalForce;
+
+//! Displacement at essential boundary
+	double* EssentialDisplacement;
 
 private:
 
@@ -97,6 +115,9 @@ public:
 //!	Read load case data
 	bool ReadLoadCases();
 
+//! Read essential boundary data
+	bool ReadEBData();
+
 //!	Read element data
 	bool ReadElements();
 
@@ -106,16 +127,36 @@ public:
 //!	Calculate column heights
 	void CalculateColumnHeights();
 
+//! Calculate global column heights
+	void CalculateGlobalColumnHeights();
+
 //! Allocate storage for matrices
 /*!	Allocate Force, ColumnHeights, DiagonalAddress and StiffnessMatrix and 
     calculate the column heights and address of diagonal elements */
 	void AllocateMatrices();
 
+//! Allocate storage for global matrices
+/*!	Allocate GlobalForce, ColumnHeights, DiagonalAddress and GlobalStiffnessMatrix and 
+    calculate the column heights and address of diagonal elements */
+	void AllocateGlobalMatrices();
+
 //!	Assemble the banded gloabl stiffness matrix
 	void AssembleStiffnessMatrix();
 
+//! Assemble global stiffness matrix
+	void AssembleGlobalStiffnessMatrix();
+
 //!	Assemble the global nodal force vector for load case LoadCase
 	bool AssembleForce(unsigned int LoadCase); 
+
+//! Assemble the essential boundary displacement vector
+	bool AssmbleEssentialDisplacement();
+
+//! Substitute contribution of essential boundary of force vector: \hat{f_x} = f_x - K_{ux}d_u
+	bool SubstitueEssentialBoundary();
+
+//! Compute nodal force (including nodes on essential boudndary)
+	bool ComputeNodalForce();
 
 //!	Return solution mode
 	inline unsigned int GetMODEX() { return MODEX; }
@@ -152,6 +193,12 @@ public:
 
 //!	Return the list of load cases
 	inline CLoadCaseData* GetLoadCases() { return LoadCases; }
+
+//! Return the EBdata
+	inline CEBData* GetEBdata() { return EBdata; }
+
+//! Return pointer to global nodal force
+	inline double* GetNodalForce() { return GlobalNodalForce; }
 
 //!	Return pointer to the banded stiffness matrix
 	inline CSkylineMatrix<double>* GetStiffnessMatrix() { return StiffnessMatrix; }

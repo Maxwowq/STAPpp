@@ -285,6 +285,25 @@ void COutputter::OutputLoadInfo()
 	}
 }
 
+// Print essential boundary info
+void COutputter::OutputEBinfo()
+{
+	CEBData* EBdata = CDomain::GetInstance()->GetEBdata();
+
+	*this << setiosflags(ios::scientific);
+	*this << " N O N E   Z E R O    E S S E N T I A L   B O U N D A R Y   D A T A" << endl
+			<< endl;
+
+	*this << "     NUMBER OF NON_ZERO ESSENTIAL BOUDNDARY DATAS . =" << setw(6) << EBdata->nebcs << endl
+			  << endl;
+	*this << "    NODE       DIRECTION   DISPLACEMENT" << endl
+		  << "   NUMBER                   MAGNITUDE" << endl;
+
+	EBdata->Write(*this);
+
+	*this << endl;
+}
+
 //	Print nodal displacement
 void COutputter::OutputNodalDisplacement()
 {
@@ -300,6 +319,24 @@ void COutputter::OutputNodalDisplacement()
 
 	for (unsigned int np = 0; np < FEMData->GetNUMNP(); np++)
 		NodeList[np].WriteNodalDisplacement(*this, Displacement);
+
+	*this << endl;
+}
+
+// Print nodal force
+void COutputter::OutputNodalForce()
+{
+	CDomain* FEMData = CDomain::GetInstance();
+	CNode* NodeList = FEMData->GetNodeList();
+	double *NodalForce = FEMData->GetNodalForce();
+
+	*this << setiosflags(ios::scientific);
+
+	*this << " N O D A L   F O R C E " << endl;
+	*this << " NODE          FX         FY        FZ" << endl;
+
+	for (unsigned int np = 0; np < FEMData->GetNUMNP(); np++)
+		NodeList[np].WriteNodalForce(*this, NodalForce);
 
 	*this << endl;
 }

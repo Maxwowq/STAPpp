@@ -72,7 +72,18 @@ int main(int argc, char *argv[])
     
 //  Assemble the banded gloabl stiffness matrix
 	FEMData->AssembleStiffnessMatrix();
+
+//  Allocate storage for global matrices
+//	Allocate GlobalForce, ColumnHeights, DiagonalAddress and GlobalStiffnessMatrix and 
+//  calculate the column heights and address of diagonal elements
+    FEMData->AllocateGlobalMatrices();
     
+//  Assemble global stiffness matrix
+    FEMData->AssembleGlobalStiffnessMatrix();
+
+//  Assemble the essential boundary displacement vector
+	FEMData->AssmbleEssentialDisplacement();
+
     double time_assemble = timer.ElapsedTime();
 
 //  Solve the linear equilibrium equations for displacements
@@ -90,9 +101,15 @@ int main(int argc, char *argv[])
     {
 //      Assemble righ-hand-side vector (force vector)
         FEMData->AssembleForce(lcase + 1);
+
+//      Substitued the contribution in force of essential boundary condition
+        FEMData->SubstitueEssentialBoundary();
             
 //      Reduce right-hand-side force vector and back substitute
         Solver->BackSubstitution(FEMData->GetForce());
+
+//      Coupute nodal force of all nodes
+        FEMData->ComputeNodalForce();
 
         *Output << " LOAD CASE" << setw(5) << lcase + 1 << endl << endl << endl;
 
@@ -101,6 +118,8 @@ int main(int argc, char *argv[])
 #endif
             
         Output->OutputNodalDisplacement();
+
+        Output->OutputNodalForce();
 
 //      Calculate and output stresses of all elements
         Output->OutputElementStress();

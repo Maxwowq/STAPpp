@@ -97,6 +97,12 @@ bool CDomain::ReadData(string FileName, string OutFile)
 	CalculateEquationNumber();
 	Output->OutputEquationNumber();
 
+// Read essential boundray data
+	if (ReadEBData())
+		Output->OutputEBinfo();
+	else
+		return false;
+
 //	Read load data
 	if (ReadLoadCases())
         Output->OutputLoadInfo();
@@ -142,16 +148,36 @@ bool CDomain::ReadNodalPoints()
 void CDomain::CalculateEquationNumber()
 {
 	NEQ = 0;
+	NBC = 0;
 	for (unsigned int np = 0; np < NUMNP; np++)	// Loop over for all node
 	{
 		for (unsigned int dof = 0; dof < CNode::NDF; dof++)	// Loop over for DOFs of node np
 		{
-			if (NodeList[np].bcode[dof]) 
+			if (NodeList[np].bcode[dof] == 1)
+			{ 
 				NodeList[np].bcode[dof] = 0;
-			else
+				NodeList[np].gbcode[dof] = 0;
+			}
+			else if(NodeList[np].bcode[dof] == 0)
 			{
 				NEQ++;
 				NodeList[np].bcode[dof] = NEQ;
+				NodeList[np].gbcode[dof] = NEQ;
+			}
+		}
+	}
+	for (unsigned int np = 0; np < NUMNP; np++)	// Loop over for all node
+	{
+		for (unsigned int dof = 0; dof < CNode::NDF; dof++)	// Loop over for DOFs of node np
+		{
+			// for essential boundary
+			if (NodeList[np].bcode[dof] == 2)
+			{ 
+				// set bcode to 0, so the bcode is consistent with former definition
+				NodeList[np].bcode[dof] = 0;
+				// set gbcode to NEQ + NBC
+				NBC++;
+				NodeList[np].gbcode[dof] = NEQ + NBC;
 			}
 		}
 	}
@@ -182,6 +208,13 @@ bool CDomain::ReadLoadCases()
     }
 
 	return true;
+}
+
+// Read essential boundary data
+bool CDomain::ReadEBData()
+{
+	EBdata = new CEBData;
+	EBdata->Read(Input);
 }
 
 // Read element data
@@ -239,6 +272,28 @@ void CDomain::CalculateColumnHeights()
 
 }
 
+//	Calculate global column heights
+void CDomain::CalculateGlobalColumnHeights()
+{
+	for (unsigned int EleGrp = 0; EleGrp < NUMEG; EleGrp++)		//	Loop over for all element groups
+    {
+        CElementGroup& ElementGrp = EleGrpList[EleGrp];
+        unsigned int NUME = ElementGrp.GetNUME();
+        
+		for (unsigned int Ele = 0; Ele < NUME; Ele++)	//	Loop over for all elements in group EleGrp
+        {
+            CElement& Element = ElementGrp[Ele];
+
+            // Generate location matrix
+            Element.GenerateGlobalLocationMatrix();
+            
+            GlobalStiffnessMatrix->CalculateColumnHeight(Element.GetGlobalLocationMatrix(), Element.GetND());
+        }
+    }
+    
+    GlobalStiffnessMatrix->CalculateMaximumHalfBandwidth();
+}
+
 //    Allocate storage for matrices Force, ColumnHeights, DiagonalAddress and StiffnessMatrix
 //    and calculate the column heights and address of diagonal elements
 void CDomain::AllocateMatrices()
@@ -260,6 +315,26 @@ void CDomain::AllocateMatrices()
     
     COutputter* Output = COutputter::GetInstance();
     Output->OutputTotalSystemData();
+}
+
+//	Allocate GlobalForce, ColumnHeights, DiagonalAddress and GlobalStiffnessMatrix and 
+//  calculate the column heights and address of diagonal elements
+void CDomain::AllocateGlobalMatrices()
+{
+	// Allocate gloabl force
+	Force = new double[NEQ + NBC];
+
+	// Create the banded global stiffness matrix
+	GlobalStiffnessMatrix = new CSkylineMatrix<double>(NEQ + NBC);
+
+	// Calculate column heights
+	CalculateGlobalColumnHeights();
+
+    //    Calculate address of diagonal elements in banded matrix
+    GlobalStiffnessMatrix->CalculateDiagnoalAddress();
+    
+    //    Allocate for banded global stiffness matrix
+    GlobalStiffnessMatrix->Allocate();
 }
 
 //	Assemble the banded gloabl stiffness matrix
@@ -293,6 +368,31 @@ void CDomain::AssembleStiffnessMatrix()
 
 }
 
+//	Assemble global stiffness matrix
+void CDomain::AssembleGlobalStiffnessMatrix()
+{
+//	Loop over for all element groups
+	for (unsigned int EleGrp = 0; EleGrp < NUMEG; EleGrp++)
+	{
+        CElementGroup& ElementGrp = EleGrpList[EleGrp];
+        unsigned int NUME = ElementGrp.GetNUME();
+
+		unsigned int size = ElementGrp[0].SizeOfStiffnessMatrix();
+		double* Matrix = new double[size];
+
+//		Loop over for all elements in group EleGrp
+		for (unsigned int Ele = 0; Ele < NUME; Ele++)
+        {
+            CElement& Element = ElementGrp[Ele];
+            Element.ElementStiffness(Matrix);
+            GlobalStiffnessMatrix->Assembly(Matrix, Element.GetGlobalLocationMatrix(), Element.GetND());
+        }
+
+		delete[] Matrix;
+		Matrix = nullptr;
+	}
+}
+
 //	Assemble the global nodal force vector for load case LoadCase
 bool CDomain::AssembleForce(unsigned int LoadCase)
 {
@@ -315,3 +415,58 @@ bool CDomain::AssembleForce(unsigned int LoadCase)
 	return true;
 }
 
+// Assemble the essential boundary condition vector
+bool CDomain::AssmbleEssentialDisplacement()
+{
+	// Allocate and initialize
+	EssentialDisplacement = new double[NBC];
+	for(int i=0; i<NBC; i++) EssentialDisplacement[i] = 0;
+
+	// Loop over non-zero essential boundary and assign data
+	for(int i=0; i<EBdata->nebcs; i++){
+		unsigned int rank = NodeList[EBdata->node[i]-1].gbcode[EBdata->dof[i]-1] - NEQ - 1;
+		EssentialDisplacement[rank] = EBdata->strain[i];
+	}
+
+	return true;
+}
+
+// Substitute contribution of essential boundary of force vector: \hat{f_x} = f_x - K_{ux}d_u
+bool CDomain::SubstitueEssentialBoundary()
+{
+	unsigned int *ColumnHeights = GlobalStiffnessMatrix->GetColumnHeights();
+
+	// Loop in column to get best cache hit
+	for(unsigned int j = NEQ; j< NEQ + NBC; j++){
+		// Start from first non-zero row
+		for(unsigned int i = j - ColumnHeights[j]; i< NEQ; i++){
+			Force[i] -= GlobalStiffnessMatrix->operator()(i,j) * EssentialDisplacement[j-NEQ];
+		}
+	}
+
+	return true;
+}
+
+// Compute nodal force (including nodes on essential boudndary) f = Kd
+bool CDomain::ComputeNodalForce()
+{
+	// Allocate and initialize
+	GlobalNodalForce = new double[NEQ + NBC];
+	for(int i=0; i<NEQ+NBC; i++) GlobalNodalForce[i]=0;
+	unsigned int *ColumnHeights = GlobalStiffnessMatrix->GetColumnHeights();
+
+	// Loop in column to get best cache hit
+	for(unsigned int j = 0; j < NEQ+NBC; j++){
+		// Start from first non-zero row
+		for(unsigned int i = j - ColumnHeights[j]; i< NEQ; i++){
+			double delta;
+			if(j <NEQ){
+				delta = (*GlobalStiffnessMatrix)(i, j) * Force[j];
+			}
+			else{
+				delta = (*GlobalStiffnessMatrix)(i, j) * EssentialDisplacement[j - NEQ];
+			}
+			GlobalNodalForce[i] += delta;
+		}
+	}
+}
