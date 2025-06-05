@@ -31,6 +31,11 @@ bool CNode::Read(ifstream& Input)
 	Input >> bcode[0] >> bcode[1] >> bcode[2]
 		  >> XYZ[0] >> XYZ[1] >> XYZ[2];
 
+	// Initialize gbcode to zero
+	gbcode[0] = 0;
+	gbcode[1] = 0;
+	gbcode[2] = 0;
+
 	return true;
 }
 

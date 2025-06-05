@@ -1,5 +1,5 @@
 TITLE : example 4-4 of T3 element
-        (14:39:30 on June 3, 2025, Tuesday)
+        (10:47:47 on June 5, 2025, Thursday)
 
 C O N T R O L   I N F O R M A T I O N
 
@@ -14,8 +14,8 @@ C O N T R O L   I N F O R M A T I O N
 
     NODE       BOUNDARY                         NODAL POINT
    NUMBER  CONDITION  CODES                     COORDINATES
-        1    1    1    1       0.00000e+00    0.00000e+00    0.00000e+00
-        2    1    1    1       0.00000e+00    1.00000e+00    0.00000e+00
+        1    2    2    1       0.00000e+00    0.00000e+00    0.00000e+00
+        2    2    2    1       0.00000e+00    1.00000e+00    0.00000e+00
         3    0    0    1       2.00000e+00    5.00000e-01    0.00000e+00
         4    0    0    1       2.00000e+00    1.00000e+00    0.00000e+00
 
@@ -27,6 +27,13 @@ C O N T R O L   I N F O R M A T I O N
         2           0    0    0
         3           1    2    0
         4           3    4    0
+
+ N O N E   Z E R O    E S S E N T I A L   B O U N D A R Y   D A T A
+
+     NUMBER OF NON_ZERO ESSENTIAL BOUDNDARY DATAS . =     0
+
+    NODE       DIRECTION   DISPLACEMENT
+   NUMBER                   MAGNITUDE
 
  L O A D   C A S E   D A T A
 
@@ -86,6 +93,13 @@ C O N T R O L   I N F O R M A T I O N
     3              -3.87101e-07      -6.65683e-06       0.00000e+00
     4               1.23482e-06      -7.04068e-06       0.00000e+00
 
+ N O D A L   F O R C E 
+  NODE                        FX                FY                FZ
+    1               4.00000e+01       1.15154e+01       0.00000e+00
+    2              -4.00000e+01       8.48456e+00       0.00000e+00
+    3               0.00000e+00      -5.68434e-14       0.00000e+00
+    4               0.00000e+00      -2.00000e+01       0.00000e+00
+
  S T R E S S  C A L C U L A T I O N S  F O R  E L E M E N T  G R O U P    1
 
   ELEMENT             S11            S22            S12            S33
@@ -96,9 +110,9 @@ C O N T R O L   I N F O R M A T I O N
 
  S O L U T I O N   T I M E   L O G   I N   S E C 
 
-     TIME FOR INPUT PHASE = 0.005710
-     TIME FOR CALCULATION OF STIFFNESS MATRIX = 0.000587
-     TIME FOR FACTORIZATION AND LOAD CASE SOLUTIONS = 0.000827
+     TIME FOR INPUT PHASE = 0.000644
+     TIME FOR CALCULATION OF STIFFNESS MATRIX = 0.000074
+     TIME FOR FACTORIZATION AND LOAD CASE SOLUTIONS = 0.000075
 
-     T O T A L   S O L U T I O N   T I M E = 0.007124
+     T O T A L   S O L U T I O N   T I M E = 0.000793
 

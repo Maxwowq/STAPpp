@@ -10,6 +10,7 @@
 
 #include "Domain.h"
 #include "Material.h"
+#include <climits>
 
 using namespace std;
 
@@ -164,6 +165,10 @@ void CDomain::CalculateEquationNumber()
 				NodeList[np].bcode[dof] = NEQ;
 				NodeList[np].gbcode[dof] = NEQ;
 			}
+			else if(NodeList[np].bcode[dof] == 2)
+			{
+				NodeList[np].gbcode[dof] = UINT_MAX;
+			}
 		}
 	}
 	for (unsigned int np = 0; np < NUMNP; np++)	// Loop over for all node
@@ -171,7 +176,7 @@ void CDomain::CalculateEquationNumber()
 		for (unsigned int dof = 0; dof < CNode::NDF; dof++)	// Loop over for DOFs of node np
 		{
 			// for essential boundary
-			if (NodeList[np].bcode[dof] == 2)
+			if (NodeList[np].gbcode[dof] == UINT_MAX)
 			{ 
 				// set bcode to 0, so the bcode is consistent with former definition
 				NodeList[np].bcode[dof] = 0;
@@ -215,6 +220,8 @@ bool CDomain::ReadEBData()
 {
 	EBdata = new CEBData;
 	EBdata->Read(Input);
+
+	return true;
 }
 
 // Read element data
@@ -321,9 +328,6 @@ void CDomain::AllocateMatrices()
 //  calculate the column heights and address of diagonal elements
 void CDomain::AllocateGlobalMatrices()
 {
-	// Allocate gloabl force
-	Force = new double[NEQ + NBC];
-
 	// Create the banded global stiffness matrix
 	GlobalStiffnessMatrix = new CSkylineMatrix<double>(NEQ + NBC);
 
@@ -332,7 +336,7 @@ void CDomain::AllocateGlobalMatrices()
 
     //    Calculate address of diagonal elements in banded matrix
     GlobalStiffnessMatrix->CalculateDiagnoalAddress();
-    
+
     //    Allocate for banded global stiffness matrix
     GlobalStiffnessMatrix->Allocate();
 }
@@ -440,7 +444,7 @@ bool CDomain::SubstitueEssentialBoundary()
 	for(unsigned int j = NEQ; j< NEQ + NBC; j++){
 		// Start from first non-zero row
 		for(unsigned int i = j - ColumnHeights[j]; i< NEQ; i++){
-			Force[i] -= GlobalStiffnessMatrix->operator()(i,j) * EssentialDisplacement[j-NEQ];
+			Force[i] -= GlobalStiffnessMatrix->operator()(i+1,j+1) * EssentialDisplacement[j-NEQ];
 		}
 	}
 
@@ -458,15 +462,17 @@ bool CDomain::ComputeNodalForce()
 	// Loop in column to get best cache hit
 	for(unsigned int j = 0; j < NEQ+NBC; j++){
 		// Start from first non-zero row
-		for(unsigned int i = j - ColumnHeights[j]; i< NEQ; i++){
+		for(unsigned int i = j - ColumnHeights[j]; i< NEQ+NBC; i++){
 			double delta;
 			if(j <NEQ){
-				delta = (*GlobalStiffnessMatrix)(i, j) * Force[j];
+				delta = (*GlobalStiffnessMatrix)(i+1, j+1) * Force[j];
 			}
 			else{
-				delta = (*GlobalStiffnessMatrix)(i, j) * EssentialDisplacement[j - NEQ];
+				delta = (*GlobalStiffnessMatrix)(i+1, j+1) * EssentialDisplacement[j - NEQ];
 			}
 			GlobalNodalForce[i] += delta;
 		}
 	}
+
+	return true;
 }

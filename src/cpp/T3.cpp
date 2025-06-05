@@ -14,6 +14,7 @@ CT3::CT3()
 
     ND_ = 6; // 2D element in 3D, z axis is constrained
     LocationMatrix_ = new unsigned int[ND_];
+    GlobalLocationMatrix_ = new unsigned int[ND_];
 
     ElementMaterial_ = nullptr;
 }

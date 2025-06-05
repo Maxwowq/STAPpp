@@ -288,7 +288,8 @@ void COutputter::OutputLoadInfo()
 // Print essential boundary info
 void COutputter::OutputEBinfo()
 {
-	CEBData* EBdata = CDomain::GetInstance()->GetEBdata();
+	CDomain* FEMData = CDomain::GetInstance();
+	CEBData* EBdata = FEMData->GetEBdata();
 
 	*this << setiosflags(ios::scientific);
 	*this << " N O N E   Z E R O    E S S E N T I A L   B O U N D A R Y   D A T A" << endl
@@ -333,7 +334,7 @@ void COutputter::OutputNodalForce()
 	*this << setiosflags(ios::scientific);
 
 	*this << " N O D A L   F O R C E " << endl;
-	*this << " NODE          FX         FY        FZ" << endl;
+	*this << "  NODE                        FX                FY                FZ" << endl;
 
 	for (unsigned int np = 0; np < FEMData->GetNUMNP(); np++)
 		NodeList[np].WriteNodalForce(*this, NodalForce);
