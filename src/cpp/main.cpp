@@ -65,13 +65,17 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-//  Allocate global vectors and matrices, such as the Force, ColumnHeights,
-//  DiagonalAddress and StiffnessMatrix, and calculate the column heights
-//  and address of diagonal elements
-	FEMData->AllocateMatrices();
-    
-//  Assemble the banded gloabl stiffness matrix
-	FEMData->AssembleStiffnessMatrix();
+    unsigned int NEQ = FEMData->GetNEQ();
+
+    if(NEQ > 0){
+    //  Allocate global vectors and matrices, such as the Force, ColumnHeights,
+    //  DiagonalAddress and StiffnessMatrix, and calculate the column heights
+    //  and address of diagonal elements
+        FEMData->AllocateMatrices();
+        
+    //  Assemble the banded gloabl stiffness matrix
+        FEMData->AssembleStiffnessMatrix();
+    }
 
 //  Allocate storage for global matrices
 //	Allocate GlobalForce, ColumnHeights, DiagonalAddress and GlobalStiffnessMatrix and 
@@ -89,8 +93,10 @@ int main(int argc, char *argv[])
 //  Solve the linear equilibrium equations for displacements
 	CLDLTSolver* Solver = new CLDLTSolver(FEMData->GetStiffnessMatrix());
     
-//  Perform L*D*L(T) factorization of stiffness matrix
-    Solver->LDLT();
+    if(NEQ > 0){
+        //  Perform L*D*L(T) factorization of stiffness matrix
+        Solver->LDLT();
+    }
 
 #ifdef _DEBUG_
     Output->PrintStiffnessMatrix();
@@ -99,14 +105,17 @@ int main(int argc, char *argv[])
 //  Loop over for all load cases
     for (unsigned int lcase = 0; lcase < FEMData->GetNLCASE(); lcase++)
     {
-//      Assemble righ-hand-side vector (force vector)
-        FEMData->AssembleForce(lcase + 1);
+        if(NEQ > 0){
+    //      Assemble righ-hand-side vector (force vector)
+            FEMData->AssembleForce(lcase + 1);
 
-//      Substitued the contribution in force of essential boundary condition
-        FEMData->SubstitueEssentialBoundary();
-            
-//      Reduce right-hand-side force vector and back substitute
-        Solver->BackSubstitution(FEMData->GetForce());
+    //      Substitued the contribution in force of essential boundary condition
+            FEMData->SubstitueEssentialBoundary();
+                
+    //      Reduce right-hand-side force vector and back substitute
+            Solver->BackSubstitution(FEMData->GetForce());
+        }
+
 
 //      Coupute nodal force of all nodes
         FEMData->ComputeNodalForce();
@@ -116,7 +125,9 @@ int main(int argc, char *argv[])
 #ifdef _DEBUG_
         Output->PrintDisplacement();
 #endif
-            
+        
+        FEMData->ConcateGlobalDisplacement();
+
         Output->OutputNodalDisplacement();
 
         Output->OutputNodalForce();

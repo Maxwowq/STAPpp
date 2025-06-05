@@ -93,6 +93,9 @@ private:
 //! Displacement at essential boundary
 	double* EssentialDisplacement;
 
+//! Global displacement
+	double* GlobalDisplacement;
+
 private:
 
 //!	Constructor
@@ -158,6 +161,9 @@ public:
 //! Compute nodal force (including nodes on essential boudndary)
 	bool ComputeNodalForce();
 
+//! Concate to get global displacement
+	void ConcateGlobalDisplacement();
+
 //!	Return solution mode
 	inline unsigned int GetMODEX() { return MODEX; }
 
@@ -166,6 +172,9 @@ public:
 
 //!	Return the total number of equations
 	inline unsigned int GetNEQ() { return NEQ; }
+
+//! Return the number of essential boundary conditon
+	inline unsigned int GetNBC() { return NBC; }
 
 //!	Return the total number of nodal points
 	inline unsigned int GetNUMNP() { return NUMNP; }
@@ -184,6 +193,12 @@ public:
 
 //!	Return pointer to the global nodal displacement vector
 	inline double* GetDisplacement() { return Force; }
+
+//! Return pointer to the essential displacement vector
+	inline double* GetEssentialDisplacement() { return EssentialDisplacement; }
+
+//! Return pointer to the global displacement vector
+	inline double* GetGlobalDisplacement() { return GlobalDisplacement; }
 
 //!	Return the total number of load cases
 	inline unsigned int GetNLCASE() { return NLCASE; }

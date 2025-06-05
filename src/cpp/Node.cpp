@@ -66,13 +66,13 @@ void CNode::WriteNodalDisplacement(COutputter& output, double* Displacement)
 
 	for (unsigned int j = 0; j < NDF; j++)
 	{
-		if (bcode[j] == 0)
+		if (gbcode[j] == 0)
 		{
 			output << setw(18) << 0.0;
 		}
 		else
 		{
-			output << setw(18) << Displacement[bcode[j] - 1];
+			output << setw(18) << Displacement[gbcode[j] - 1];
 		}
 	}
 

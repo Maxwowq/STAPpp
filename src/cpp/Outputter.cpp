@@ -310,7 +310,7 @@ void COutputter::OutputNodalDisplacement()
 {
 	CDomain* FEMData = CDomain::GetInstance();
 	CNode* NodeList = FEMData->GetNodeList();
-	double* Displacement = FEMData->GetDisplacement();
+	double* GlobalDisplacement = FEMData->GetGlobalDisplacement();
 
 	*this << setiosflags(ios::scientific);
 
@@ -319,7 +319,7 @@ void COutputter::OutputNodalDisplacement()
 	*this << "  NODE           X-DISPLACEMENT    Y-DISPLACEMENT    Z-DISPLACEMENT" << endl;
 
 	for (unsigned int np = 0; np < FEMData->GetNUMNP(); np++)
-		NodeList[np].WriteNodalDisplacement(*this, Displacement);
+		NodeList[np].WriteNodalDisplacement(*this, GlobalDisplacement);
 
 	*this << endl;
 }
@@ -347,7 +347,7 @@ void COutputter::OutputElementStress()
 {
 	CDomain* FEMData = CDomain::GetInstance();
 
-	double* Displacement = FEMData->GetDisplacement();
+	double* Displacement = FEMData->GetGlobalDisplacement();
 
 	unsigned int NUMEG = FEMData->GetNUMEG();
 

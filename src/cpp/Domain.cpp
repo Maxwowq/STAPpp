@@ -476,3 +476,12 @@ bool CDomain::ComputeNodalForce()
 
 	return true;
 }
+
+// Concate to get global displacement
+void CDomain::ConcateGlobalDisplacement()
+{
+	GlobalDisplacement = new double[NEQ + NBC];
+
+	for(int i=0; i<NEQ; i++) GlobalDisplacement[i] = Force[i];
+	for(int i=0; i<NBC; i++) GlobalDisplacement[NEQ + i] = EssentialDisplacement[i];
+}

@@ -129,7 +129,7 @@ void CBar::ElementStress(double* stress, double* Displacement)
 	*stress = 0.0;
 	for (unsigned int i = 0; i < 6; i++)
 	{
-		if (LocationMatrix_[i])
-			*stress += S[i] * Displacement[LocationMatrix_[i]-1];
+		if (GlobalLocationMatrix_[i])
+			*stress += S[i] * Displacement[GlobalLocationMatrix_[i]-1];
 	}
 }
