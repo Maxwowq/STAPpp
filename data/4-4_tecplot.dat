@@ -1,9 +1,0 @@
-Title="example 4-4 of T3 element"
-Variables="X"   "Y"   "U"   "V"
-Zone N=4 E=2 F=FEPOINT ET=TRIANGLE
-0                   0                   0                   0
-0                   1                   0                   0
-2                 0.5        -3.87101e-07        -6.65683e-06
-2                   1         1.23482e-06        -7.04068e-06
-2                   1                   3
-2                   3                   4
