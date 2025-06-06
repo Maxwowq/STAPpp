@@ -1,2 +1,7 @@
 .vscode/
 build/
+_minted*/
+__pycahche__/
+inps/
+*.inp
+4-4*

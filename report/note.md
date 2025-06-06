@@ -59,5 +59,5 @@ void CElementGroup::AllocateMaterials(std::size_t size)
 - [x] 增加节点力到输出
 - [x] 处理无节点力输入、无自由点等特殊情况
 - [x] 分片实验（基于例题4-5）
-- [ ] 验证算例
-- [ ] 完成课程设计报告
+- [x] 完成课程设计报告
+- [ ] 整理代码库文件结构

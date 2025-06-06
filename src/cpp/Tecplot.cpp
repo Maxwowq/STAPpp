@@ -37,7 +37,7 @@ void CTecplot::OutputDatFile()
     DatOutputFile << "Title=\"" << FEMData->GetTitle() << "\"" <<endl;
 
     // Output the variables
-    DatOutputFile << "Variables=\"X\"   \"Y\"   \"U\"   \"V\"" << endl;
+    DatOutputFile << "Variables=\"X\"   \"Y\"   \"U\"   \"V\"   \"FX\"   \"FY\" " << endl;
 
     unsigned int NUMEG = FEMData->GetNUMEG();
 
@@ -69,20 +69,31 @@ void CTecplot::OutputT3Zone(unsigned int EleGrp)
 
     // Output nodal info
     CNode* Nodelist = FEMData->GetNodeList();
-    double* Displacement = FEMData->GetDisplacement();
+    double* Displacement = FEMData->GetGlobalDisplacement();
+    double* NodalForce = FEMData->GetNodalForce();
     for(unsigned int np = 0; np < NUMNP; np++){
         // Output X, Y
         DatOutputFile << Nodelist[np].XYZ[0] << setw(20) <<Nodelist[np].XYZ[1] << setw(20);
 
         // Output U, V
         double u=0, v=0;
-        if(Nodelist[np].bcode[0]){
-            u = Displacement[Nodelist[np].bcode[0] - 1];
+        if(Nodelist[np].gbcode[0]){
+            u = Displacement[Nodelist[np].gbcode[0] - 1];
         }
-        if(Nodelist[np].bcode[1]){
-            v = Displacement[Nodelist[np].bcode[1] -1];
+        if(Nodelist[np].gbcode[1]){
+            v = Displacement[Nodelist[np].gbcode[1] -1];
         }
-        DatOutputFile << u << setw(20) << v << endl;
+        DatOutputFile << u << setw(20) << v << setw(20);
+
+        // Output FX, FY
+        double fx=0, fy=0;
+        if(Nodelist[np].gbcode[0]){
+            fx = NodalForce[Nodelist[np].gbcode[0] - 1];
+        }
+        if(Nodelist[np].gbcode[1]){
+            fy = NodalForce[Nodelist[np].gbcode[1] -1];
+        }
+        DatOutputFile << fx << setw(20) << fy << endl;
     }
 
     // Output element info
