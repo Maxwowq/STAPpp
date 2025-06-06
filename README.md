@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is an enhanced version of the STAPpp finite element analysis program. Building upon the [original STAPpp](https://github.com/Maxwowq/STAPpp) framework, this project introduces **T3 triangular element support** and implements several significant functionality extensions.
+This is an enhanced version of the STAPpp finite element analysis program. Building upon the [original STAPpp](https://github.com/xzhang66/STAPpp) framework, this project introduces **T3 triangular element support** and implements several significant functionality extensions.
 
 ## 🚀 Key Improvements & New Features
 
