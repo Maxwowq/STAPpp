@@ -4,4 +4,6 @@ _minted*/
 __pycahche__/
 inps/
 *.inp
+*.py
+*.ipynb
 4-4*
